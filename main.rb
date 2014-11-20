@@ -4,10 +4,8 @@ require 'sinatra'
 set :sessions, true
 
 helpers do
-
-  def calculate_total(cards) # cards is [['H', '3'], ['S', '10'], ...]
+  def calculate_total(cards) 
     arr = cards.map { |element| element[1] }
-
     total = 0
     arr.each do |a|
       if a.to_i == 'A'
@@ -17,16 +15,39 @@ helpers do
       end
     end
 
-    #correct for aces
     arr.select { |element| element == 'A' }.count.times do 
       break if total < 21
       total -= 10
     end
-
     total
+  end
+
+  def card_image(card) 
+    suit = case card[0]
+      when 'H' then 'hearts'
+      when 'D' then 'diamonds'
+      when 'C' then 'clubs'
+      when 'S' then 'spades'
+    end
+
+    value = card[1]
+    if ['J', 'Q', 'K', 'A'].include?(value)
+      value = case card[1]
+        when 'J' then 'jack'
+        when 'Q' then 'queen'
+        when 'K' then 'king'
+        when 'A' then 'ace'
+      end
+    end
+    
+    "<img src='/images/cards/#{suit}_#{value}.jpg' class='card_image'>"
   end
 end
 
+before do
+  @success_or_error = true
+  @show_dealer_score = true
+end
 
 get '/' do
   if session[:player_name]
@@ -41,17 +62,19 @@ get '/new_player' do
 end
 
 post '/new_player' do
+  if params[:player_name].empty?
+    @error = "Name is required."
+    halt erb :new_player
+  end
   session[:player_name] = params[:player_name]
   redirect '/game'
 end
 
 get '/game' do
-  #set up deck
   suits = ['H', 'D', 'C', 'S']
   values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   session[:deck] = suits.product(values).shuffle!
-
-  #deal cards
+  
   session[:player_cards] = []
   session[:dealer_cards] = []
 
@@ -62,6 +85,65 @@ get '/game' do
 
   erb :game
 end
+
+post '/game/player/hit' do
+  session[:player_cards] << session[:deck].pop
+  player_total = calculate_total(session[:player_cards])
+  if player_total == 21
+    @success = "Congratulations! You hit BlackJack!!"
+    @success_or_error = false
+  elsif player_total > 21 
+    @error = "Sorry, you are busted!"
+    @success_or_error = false
+  end
+  erb :game
+end
+
+post '/game/player/stay' do
+  @success = "You have decided to stay."
+  @success_or_error = false
+  redirect '/game/dealer'
+end
+
+get '/game/dealer' do
+  @success_or_error = false
+
+  dealer_total = calculate_total(session[:dealer_cards])
+  if dealer_total == 21
+    @error = "You lose. Dealer hit BlackJack!"
+  elsif dealer_total > 21
+    @success = "Congratulations, the dealer busted. You win!"
+  elsif dealer_total >= 17 #dealer stays
+    redirect '/game/compare'
+  else #dealer hits
+    @show_dealer_btn = true
+    @show_dealer_score = false
+  end
+
+  erb :game
+end
+
+post '/game/dealer/hit' do
+  session[:dealer_cards] << session[:deck].pop
+  redirect '/game/dealer'
+end
+
+get '/game/compare' do
+  @success_or_error = false
+
+  player_total = calculate_total(session[:player_cards])
+  dealer_total = calculate_total(session[:dealer_cards])
+
+  if player_total > dealer_total
+    @success = "Congratulations, you won!"
+  elsif dealer_total > player_total
+    @error = "Sorry, you lost!"
+  else
+    @success = "It's a tie!"
+  end
+
+  erb :game
+end 
 
 
 
