@@ -4,6 +4,7 @@ require 'sinatra'
 set :sessions, true
 BLACKJACK_AMT = 21
 DEALER_MIN_HIT = 17
+POT = 500
 
 helpers do
   def calculate_total(cards) 
@@ -48,12 +49,14 @@ helpers do
   def winner!(msg)
     @play_again = true
     @success_or_error = false
+    session[:player_pot] += session[:player_bet]
     @success = "<strong>Congratulations. You win.</strong> #{msg}"
   end
 
   def loser!(msg)
     @play_again = true
     @success_or_error = false
+    session[:player_pot] -= session[:player_bet]
     @error = "<strong>Sorry, you lose.</strong> #{msg}"
   end
 
@@ -78,6 +81,7 @@ get '/' do
 end
 
 get '/new_player' do
+  session[:player_pot] = POT
   erb :new_player
 end
 
@@ -87,7 +91,25 @@ post '/new_player' do
     halt erb :new_player
   end
   session[:player_name] = params[:player_name]
-  redirect '/game'
+  redirect '/bet'
+end
+
+get '/bet' do
+  session[:player_bet] = nil
+  erb :bet 
+end
+
+post '/bet' do
+  if params[:bet_amount].nil? || params[:bet_amount].to_i == 0
+    @error = "You must make a bet in order to play!"
+    halt erb(:bet)
+  elsif params[:bet_amount].to_i > session[:player_pot]
+    @error = "You cannot bet more than you have. You currently have $#{session[:player_pot]} in your pot."
+    halt erb(:bet)
+  else
+    session[:player_bet] = params[:bet_amount].to_i
+    redirect '/game'
+  end
 end
 
 get '/game' do
@@ -116,7 +138,7 @@ post '/game/player/hit' do
   elsif player_total > BLACKJACK_AMT 
     loser!("You busted!")
   end
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do
@@ -135,13 +157,13 @@ get '/game/dealer' do
     loser!("Dealer hit BlackJack!")
   elsif dealer_total > BLACKJACK_AMT
     winner!("Dealer busted")
-  elsif dealer_total >= DEALER_MIN_HIT #dealer stays
+  elsif dealer_total >= DEALER_MIN_HIT 
     redirect '/game/compare'
-  else #dealer hits
+  else 
     @show_dealer_btn = true
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/dealer/hit' do
@@ -163,7 +185,7 @@ get '/game/compare' do
     tie!("Both of your final scores are #{player_total}.")
   end
 
-  erb :game
+  erb :game, layout: false
 end 
 
 get '/game_over' do
