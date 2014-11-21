@@ -1,19 +1,16 @@
 <div id="game">
   <%if @error %>
-      <div class="alert alert-error"><%=@error%></div>
+      <div class="alert alert-danger"><%=@error%></div>
     <% end %>
     <%if @success %>
       <div class="alert alert-success"><%=@success%></div>
   <% end %>
 
-  <h3>Black Jack</h3>
-  <p>Welcome <%= session[:player_name] %></p>
-
   <% if @play_again %>
     <p>
       <strong>Play again?</strong>
-      <a href="/bet" class="btn btn-primary">Yes</a>
-      <a href="/game_over" class="btn btn-primary">No</a>
+      <a href="/bet" class="btn btn-info">Yes</a>
+      <a href="/game_over" class="btn btn-info">No</a>
     </p>
   <% end %>
   <div class="well">
@@ -30,7 +27,7 @@
       <p>
         <h5>Dealer has <%= calculate_total(session[:dealer_cards]) %> and is going to hit.</h5>
         <form id="dealer_hit" action="/game/dealer/hit" method="post">
-          <input type="submit" value="Click here to view dealer's next card &rarr;" class="btn btn-primary">
+          <input type="submit" value="Click here to view dealer's next card &rarr;" class="btn btn-info">
         </form>
       </p>
     <% end %>

@@ -1,5 +1,15 @@
-<h3>New Player Form</h3>
-<form action="/new_player" method="post">
-  <input type="text" name="player_name"/><br>
-  <input type="submit" class='btn btn-primary'>
+
+<form role="form" action="/new_player" method="post">
+  <h3>New Player Form</h3>
+  <div class="form-group">
+    <label for="player_name">Name</label>
+    <input type="text" class="form-control" id="player_name" name="player_name" placeholder="Enter Name here" required>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" required> Yes, I am over 18. <br>
+      <input type="checkbox" required> Yes, I agree to the Terms and Conditions. 
+    </label>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
 </form>
