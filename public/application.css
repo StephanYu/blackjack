@@ -10,3 +10,19 @@
 .card_image {
   margin: 3px 5px;
 }
+
+#bet_form {
+  border: 1px solid #c8c8c8;
+  padding: 25px;
+  border-radius: 5px;
+  width: 50%;
+  margin: 30px auto 0;
+}
+
+#new_player_form {
+  border: 1px solid #c8c8c8;
+  padding: 25px;
+  border-radius: 5px;
+  width: 50%;
+  margin: 30px auto 0;
+}

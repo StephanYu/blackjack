@@ -1,6 +1,8 @@
 
-<form role="form" action="/bet" method="post">
-  <h3>Make a bet</h3>
+<form id="bet_form" role="form" action="/bet" method="post">
+  <div class="form-group">
+    <h3>Make a bet</h3> 
+  </div>
   <div class="form-group">
     <p>Welcome <%= session[:player_name] %>. You have $<%= session[:player_pot].to_i %></p>
   </div>
@@ -8,5 +10,7 @@
     <label for="bet_amount">Wager</label>
     <input type="text" class="form-control" id="bet_amount" name="bet_amount" placeholder="Enter Wager Amount here" required>
   </div>
-  <button type="submit" class="btn btn-primary">Bet</button>
+  <button type="submit" class="btn btn-warning btn-block">Bet</button>
 </form>
+
+ 
