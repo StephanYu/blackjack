@@ -1,20 +1,43 @@
+
 <div id="game">
   <%if @error %>
-      <div class="alert alert-danger"><%=@error%></div>
-    <% end %>
-    <%if @success %>
-      <div class="alert alert-success"><%=@success%></div>
+    <div class="alert alert-danger"><%=@error%></div>
+  <% end %>
+  <%if @success %>
+    <div class="alert alert-success"><%=@success%></div>
   <% end %>
 
   <% if @play_again %>
     <p>
       <strong>Play again?</strong>
-      <a href="/bet" class="btn btn-info">Yes</a>
-      <a href="/game_over" class="btn btn-info">No</a>
+      <a href="/bet" class="btn btn-info btn-sm play-btn">Yes</a>
+      <a href="/game_over" class="btn btn-info btn-sm play-btn">No</a>
     </p>
   <% end %>
+
   <div class="well">
-    <h4>Dealer's cards:</h4>
+    <h5 class='well-header'><%= session[:player_name] %>'s cards</h5>
+    <% session[:player_cards].each do |card| %>
+      <%= card_image(card) %>
+    <% end %>
+    <p>
+      <h5 class='well-paragraph'>You have <%= calculate_total(session[:player_cards]) %></h5>
+      <h5 class='well-paragraph'>You bet $<%= session[:player_bet] %> this round and currently have $<%= session[:player_pot] %> remaining in your pot.</h5>
+    </p>
+    <div class="row well-btn">
+      <% if @success_or_error %>
+        <form id="hit-btn" action="/game/player/hit" method="post">
+          <input type="submit" class="btn btn-info btn-sm game-btn" value="Hit ">
+        </form>
+        <form id="stay-btn" action="/game/player/stay" method="post">
+          <input type="submit" class="btn btn-info btn-sm game-btn" value="Stay">
+        </form>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="well">
+    <h5 class='well-header'>Dealer's cards</h5>
     <% session[:dealer_cards].each_with_index do |card, index| %>
       <% if session[:turn] != "dealer" && index == 0 %>
         <img src='/images/cards/cover.png'/>
@@ -27,33 +50,13 @@
       <p>
         <h5>Dealer has <%= calculate_total(session[:dealer_cards]) %> and is going to hit.</h5>
         <form id="dealer_hit" action="/game/dealer/hit" method="post">
-          <input type="submit" value="Click here to view dealer's next card &rarr;" class="btn btn-info">
+          <input type="submit" value="Click here to view dealer's next card &rarr;" class="btn btn-info btn-sm">
         </form>
       </p>
     <% end %>
   </div>
 
-  <br/>
 
-  <div class="well">
-    <h4><%= session[:player_name] %>'s cards:</h4>
-    <% session[:player_cards].each do |card| %>
-      <%= card_image(card) %>
-    <% end %>
-    <p>
-      <h5>You have <%= calculate_total(session[:player_cards]) %></h5>
-      <h5>You bet $<%= session[:player_bet] %> this round and currently have $<%= session[:player_pot] %> remaining in your pot.</h5>
-    </p>
-  </div>
-
-  <% if @success_or_error %>
-    <form id="hit-btn" action="/game/player/hit" method="post">
-      <input type="submit" class="btn btn-success" value="Hit Me">
-    </form>
-    <form id="stay-btn" action="/game/player/stay" method="post">
-      <input type="submit" class="btn btn-warning" value="Stay">
-    </form>
-  <% end %>
 </div>
 <!-- Vectorized Playing Cards 1.3- http://code.google.com/p/vectorized-playing-cards/
 Copyright 2011 - Chris Aguilar

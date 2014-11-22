@@ -12,7 +12,8 @@
 }
 
 #bet_form {
-  border: 1px solid #c8c8c8;
+  border: 1px solid rgba(255,255,255,0.1);
+  background-color: #1c1e22;
   padding: 25px;
   border-radius: 5px;
   width: 50%;
@@ -20,9 +21,44 @@
 }
 
 #new_player_form {
-  border: 1px solid #c8c8c8;
+  border: 1px solid rgba(255,255,255,0.1);
+  background-color: #1c1e22;
   padding: 25px;
   border-radius: 5px;
   width: 50%;
   margin: 30px auto 0;
+}
+
+
+.navbar a {
+  font-family: 'Gotham SSm A', 'Gotham SSm B', sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-shadow: none;
+  font-size: 12px;
+}
+
+#logo {
+  font-size: 14px;
+}
+
+.well-header {
+  text-transform: uppercase;
+}
+
+.well-paragraph {
+  font-weight: 350;
+}
+
+.well-btn {
+  margin-left: 0px;
+}
+
+.game-btn {
+  width: 55px;
+}
+
+.play-btn {
+  width: 43px;
 }
