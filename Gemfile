@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-ruby 
+ruby '2.0.0p481'
 
 gem 'sinatra'
 gem 'shotgun'
