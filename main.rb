@@ -96,6 +96,9 @@ end
 
 get '/bet' do
   session[:player_bet] = nil
+  if session[:player_pot] == 0
+    session[:player_pot] = POT
+  end
   erb :bet 
 end
 
@@ -104,7 +107,7 @@ post '/bet' do
     @error = "You must make a bet in order to play!"
     halt erb(:bet)
   elsif params[:bet_amount].to_i > session[:player_pot]
-    @error = "You cannot bet more than you have. You currently have $#{session[:player_pot]} in your pot."
+    @error = "You cannot bet more than you have. You currently have $#{session[:player_pot]} in your pot. Make a bet or start a new game."
     halt erb(:bet)
   else
     session[:player_bet] = params[:bet_amount].to_i
