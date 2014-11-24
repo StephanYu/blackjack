@@ -1,11 +1,4 @@
 
-<%if @error %>
-    <div class="alert alert-danger"><%=@error%></div>
-  <% end %>
-  <%if @success %>
-    <div class="alert alert-success"><%=@success%></div>
-  <% end %>
-  
 <form id="bet_form" role="form" action="/bet" method="post">
   <div class="form-group">
     <h3>Make a bet</h3> 

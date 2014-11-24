@@ -49,11 +49,7 @@ helpers do
   def winner!(msg)
     @play_again = true
     @success_or_error = false
-    if @blackjack 
-      session[:player_pot] += session[:player_bet]*1.5
-    else
-      session[:player_pot] += session[:player_bet]
-    end
+    session[:player_pot] += session[:player_bet]
     @success = "<strong>Congratulations. You win.</strong> #{msg}"
   end
 
@@ -61,11 +57,7 @@ helpers do
     @play_again = true
     @success_or_error = false
     session[:player_pot] -= session[:player_bet]
-    if session[:player_pot] < 0
-      @error = "<strong>Game Over. You need to credit your account.</strong>"
-    else
-      @error = "<strong>Sorry, you lose.</strong> #{msg}"
-    end
+    @error = "<strong>Sorry, you lose.</strong> #{msg}"
   end
 
   def tie!(msg)
@@ -78,7 +70,6 @@ end
 before do
   @success_or_error = true
   @show_dealer_score = true
-  @blackjack = false
 end
 
 get '/' do
@@ -113,7 +104,7 @@ post '/bet' do
     @error = "You must make a bet in order to play!"
     halt erb(:bet)
   elsif params[:bet_amount].to_i > session[:player_pot]
-    @error = "You cannot bet more than you have. You currently have $#{session[:player_pot]} in your pot. Bet what you have or start a new Game."
+    @error = "You cannot bet more than you have. You currently have $#{session[:player_pot]} in your pot."
     halt erb(:bet)
   else
     session[:player_bet] = params[:bet_amount].to_i
@@ -136,11 +127,6 @@ get '/game' do
     session[:dealer_cards] << session[:deck].pop
   end
 
-  player_total = calculate_total(session[:player_cards])
-  if player_total == BLACKJACK_AMT
-    @blackjack = true
-  end
-
   erb :game
 end
 
@@ -148,7 +134,6 @@ post '/game/player/hit' do
   session[:player_cards] << session[:deck].pop
   player_total = calculate_total(session[:player_cards])
   if player_total == BLACKJACK_AMT
-    @blackjack = true
     winner!("You hit BlackJack!!")
   elsif player_total > BLACKJACK_AMT 
     loser!("You busted!")
